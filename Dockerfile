@@ -1,14 +1,14 @@
 # Builder step
-FROM golang:1.10-alpine AS builder
-WORKDIR /go/src/github.com/luckyong-dev/learn-k8s
+FROM golang:1.12-alpine AS builder
+WORKDIR /app
 ADD . .
 RUN apk update \
     && apk add git
-RUN go get
+RUN go mod vendor
 RUN go build -o hellobin .
 
 # Deployment
 FROM alpine
 WORKDIR /app
-COPY --from=builder /go/src/github.com/luckyong-dev/learn-k8s/hellobin .
+COPY --from=builder /app .
 CMD ./hellobin
